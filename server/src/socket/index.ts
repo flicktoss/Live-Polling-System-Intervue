@@ -38,7 +38,7 @@ export const setupSocketHandlers = (io: Server): void => {
         const activePoll = await pollService.getActivePoll();
         if (activePoll) {
           socket.emit('new_question', {
-            pollId: activePoll._id,
+            pollId: activePoll._id.toString(),
             question: activePoll.question,
             options: activePoll.options.map((o) => ({ text: o.text })),
             timer: activeTimerRemaining > 0 ? activeTimerRemaining : activePoll.timer,
@@ -101,7 +101,7 @@ export const setupSocketHandlers = (io: Server): void => {
 
           // Broadcast to all
           io.emit('new_question', {
-            pollId: poll._id,
+            pollId: poll._id.toString(),
             question: poll.question,
             options: poll.options.map((o) => ({ text: o.text })),
             timer: data.timer,
@@ -118,7 +118,7 @@ export const setupSocketHandlers = (io: Server): void => {
                 clearInterval(activeTimerInterval);
                 activeTimerInterval = null;
               }
-              const updatedPoll = await pollService.deactivatePoll(poll._id as string);
+              const updatedPoll = await pollService.deactivatePoll(poll._id.toString());
               if (updatedPoll) {
                 io.emit('poll_results', pollService.calculateResults(updatedPoll));
               }
